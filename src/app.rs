@@ -3,18 +3,22 @@
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TemplateApp {
     // Example stuff:
-    label: String,
-
-    #[serde(skip)] // This how you opt-out of serialization of a field
-    value: f32,
+    city: String,
+    country_code: String,
+    api_key: String,
+    get_weather: String,
+    // #[serde(skip)] // This how you opt-out of serialization of a field
+    // value: f32,
 }
 
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            label: "Hello World!".to_owned(),
-            value: 2.7,
+            city: "Paris".to_owned(),
+            country_code: "FR".to_owned(),
+            get_weather: "...".to_owned(),
+            api_key: "d8d31293bee740761c9ba933823c09ea".to_owned(),
         }
     }
 }
@@ -50,16 +54,12 @@ impl eframe::App for TemplateApp {
             // The top panel is often a good place for a menu bar:
 
             egui::menu::bar(ui, |ui| {
-                // NOTE: no File->Quit on web pages!
-                let is_web = cfg!(target_arch = "wasm32");
-                if !is_web {
-                    ui.menu_button("File", |ui| {
-                        if ui.button("Quit").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                        }
-                    });
-                    ui.add_space(16.0);
-                }
+                ui.menu_button("File", |ui| {
+                    if ui.button("Quit").clicked() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    }
+                });
+                ui.add_space(16.0);
 
                 egui::widgets::global_dark_light_mode_buttons(ui);
             });
@@ -67,16 +67,25 @@ impl eframe::App for TemplateApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             // The central panel the region left after adding TopPanel's and SidePanel's
-            ui.heading("eframe template");
+            ui.heading("Eframe Heading");
 
             ui.horizontal(|ui| {
-                ui.label("Write something: ");
-                ui.text_edit_singleline(&mut self.label);
+                ui.label("City");
+                ui.text_edit_singleline(&mut self.city);
             });
 
-            ui.add(egui::Slider::new(&mut self.value, 0.0..=10.0).text("value"));
-            if ui.button("Increment").clicked() {
-                self.value += 1.0;
+            ui.horizontal(|ui| {
+                ui.label("Country Code");
+                ui.text_edit_singleline(&mut self.country_code);
+            });
+            ui.horizontal(|ui| {
+                ui.label("Weather");
+                ui.text_edit_singleline(&mut self.get_weather);
+            });
+
+            // ui.add(egui::Slider::new(&mut self.value, 0.0..=10.0).text("value"));
+            if ui.button("Get Weather").clicked() {
+                // self.value += 1.0;
             }
 
             ui.separator();
